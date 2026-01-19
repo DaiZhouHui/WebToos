@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP与端口转换工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.5;
+            padding: 12px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 16px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: 520px;
+        }
+
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            border-right: 1px solid #eaeaea;
+            background-color: #fafbfc;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        .panel-title {
+            font-size: 17px;
+            color: #2c3e50;
+            margin-bottom: 16px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #4b6cb7;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .panel-title i {
+            color: #4b6cb7;
+        }
+
+        .upload-area {
+            border: 2px dashed #b8c2cc;
+            border-radius: 7px;
+            padding: 24px 12px;
+            text-align: center;
+            margin-bottom: 18px;
+            transition: all 0.3s;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #4b6cb7;
+            background-color: #f8f9ff;
+        }
+
+        .upload-area i {
+            font-size: 36px;
+            color: #7e8c9e;
+            margin-bottom: 10px;
+        }
+
+        .upload-area h3 {
+            margin-bottom: 6px;
+            color: #4a5568;
+            font-size: 15px;
+        }
+
+        .upload-area p {
+            color: #718096;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #3a5795;
+        }
+
+        .btn-upload {
+            background-color: #4b6cb7;
+        }
+
+        .btn-extract {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            background-color: #2d3748;
+        }
+
+        .btn-extract:hover {
+            background-color: #1a202c;
+        }
+
+        .btn-download {
+            background-color: #38a169;
+            margin-right: 6px;
+        }
+
+        .btn-download:hover {
+            background-color: #2f855a;
+        }
+
+        .btn-copy {
+            background-color: #3182ce;
+        }
+
+        .btn-copy:hover {
+            background-color: #2c5282;
+        }
+
+        .config-section {
+            margin-top: 20px;
+        }
+
+        .config-item {
+            margin-bottom: 15px;
+        }
+
+        .config-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 13px;
+        }
+
+        .config-item input,
+        .config-item select,
+        .config-item textarea {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 13px;
+            transition: border-color 0.3s;
+        }
+
+        .config-item textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .config-item input:focus,
+        .config-item select:focus,
+        .config-item textarea:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.1);
+        }
+
+        .preview-area {
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            padding: 12px;
+            background-color: #f8fafc;
+            margin-top: 15px;
+            height: 360px;
+            overflow-y: auto;
+        }
+
+        .preview-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            line-height: 1.4;
+            color: #2d3748;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .file-info {
+            background-color: #edf2f7;
+            padding: 8px 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+
+        .file-info i {
+            color: #4b6cb7;
+        }
+
+        .result-stats {
+            color: #718096;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 12px;
+            margin-top: 0;
+        }
+
+        /* 新增：功能选项卡样式 */
+        .function-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #718096;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: #4b6cb7;
+        }
+
+        .tab-btn.active {
+            color: #4b6cb7;
+            border-bottom-color=#4b6cb7;
+            background-color: #f8fafc;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 新增：CSV表格预览样式 */
+        .csv-preview {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #2d3748;
+            overflow-x: auto;
+        }
+
+        .csv-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0;
+        }
+
+        .csv-table th,
+        .csv-table td {
+            border: 1px solid #cbd5e0;
+            padding: 6px 10px;
+            text-align: left;
+            font-size: 11px;
+        }
+
+        .csv-table th {
+            background-color: #e2e8f0;
+            font-weight: 600;
+            color: #2d3748;
+            position: sticky;
+            top: 0;
+        }
+
+        .csv-table tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+
+        .csv-table tr:hover {
+            background-color: #ebf8ff;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .left-panel {
+                border-right: none;
+                border-bottom: 1px solid #eaeaea;
+            }
+
+            .action-buttons {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .action-buttons .btn {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+
+        /* 新增：支持格式提示 */
+        .format-hint {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 4px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-file-csv"></i> IP与端口转换工具</h1>
+            <p class="subtitle">支持CSV文件提取和手动输入转换，生成标准化的CSV表格</p>
+        </header>
+
+        <div class="main-content">
+            <!-- 左侧面板：功能选择 -->
+            <div class="left-panel">
+                <div class="function-tabs">
+                    <button class="tab-btn active" data-tab="csv-extract">
+                        <i class="fas fa-file-import"></i> CSV提取
+                    </button>
+                    <button class="tab-btn" data-tab="manual-convert">
+                        <i class="fas fa-keyboard"></i> 手动转换
+                    </button>
+                </div>
+
+                <!-- CSV提取功能（原有功能） -->
+                <div id="csv-extract" class="tab-content active">
+                    <div class="panel-title">
+                        <i class="fas fa-upload"></i> CSV文件提取
+                    </div>
+
+                    <div class="upload-area" id="dropArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>拖放CSV文件到此处</h3>
+                        <p>或点击选择文件上传</p>
+                        <input type="file" id="fileInput" accept=".csv" hidden>
+                        <button class="btn btn-upload" id="selectFileBtn">选择CSV文件</button>
+                        <p class="result-stats" id="fileInfo">未选择文件</p>
+                    </div>
+
+                    <button class="btn btn-extract" id="extractBtn">
+                        <i class="fas fa-cogs"></i> 提取IP和端口信息
+                    </button>
+
+                    <div class="config-section">
+                        <div class="config-item">
+                            <label for="connector">
+                                <i class="fas fa-link"></i> IP与端口连接符
+                            </label>
+                            <select id="connector">
+                                <option value=":">冒号 : (ip:port)</option>
+                                <option value="|">竖线 | (ip|port)</option>
+                                <option value="-">连字符 - (ip-port)</option>
+                                <option value="_">下划线 _ (ip_port)</option>
+                                <option value=",">逗号 , (ip,port)</option>
+                            </select>
+                        </div>
+
+                        <div class="config-item">
+                            <label for="separator">
+                                <i class="fas fa-grip-lines"></i> 条目分隔符
+                            </label>
+                            <select id="separator">
+                                <option value=",">逗号 ,</option>
+                                <option value="\n">换行符 (每行一个)</option>
+                                <option value=";">分号 ;</option>
+                                <option value="|">竖线 |</option>
+                                <option value=" ">空格</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 手动转换功能（新增功能） -->
+                <div id="manual-convert" class="tab-content">
+                    <div class="panel-title">
+                        <i class="fas fa-keyboard"></i> 手动输入转换
+                    </div>
+
+                    <div class="config-item">
+                        <label for="manualInput">
+                            <i class="fas fa-pen"></i> 输入IP和端口（支持多种格式）
+                        </label>
+                        <textarea id="manualInput" placeholder="输入各种格式的IP和端口，例如：
+192.168.1.1:80
+192.168.1.2 8080
+192.168.1.3-443
+192.168.1.4|3306
+http://192.168.1.5:9000
+https://192.168.1.6:8443
+
+# 单行输入多个组合，支持各种分隔符：
+192.168.1.10:22,192.168.1.11:80,192.168.1.12:443
+192.168.2.1:8080;192.168.2.2:9000;192.168.2.3:3306
+192.168.3.1-80 192.168.3.2-443 192.168.3.3-22
+192.168.4.1|3389|192.168.4.2|5900|192.168.4.3|5432"></textarea>
+                        <div class="format-hint">支持格式: ip:port, ip port, ip-port, ip|port, http://ip:port,
+                            https://ip:port</div>
+                    </div>
+
+                    <button class="btn btn-extract" id="convertBtn">
+                        <i class="fas fa-exchange-alt"></i> 转换为CSV表格
+                    </button>
+
+                    <div class="config-item">
+                        <label for="outputColumns">
+                            <i class="fas fa-columns"></i> CSV列设置
+                        </label>
+                        <select id="outputColumns">
+                            <option value="ip,port">IP, 端口 (两列)</option>
+                            <option value="ip,port,protocol">IP, 端口, 协议 (三列)</option>
+                            <option value="url,ip,port">URL, IP, 端口 (三列)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧面板：结果预览和下载 -->
+            <div class="right-panel">
+                <div class="panel-title">
+                    <i class="fas fa-eye"></i> 转换结果预览
+                </div>
+
+                <div class="file-info" id="resultInfo">
+                    <i class="fas fa-info-circle"></i>
+                    <span>选择功能并输入数据开始转换...</span>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-download" id="downloadBtn" disabled>
+                        <i class="fas fa-download"></i> 下载结果文件
+                    </button>
+                    <button class="btn btn-copy" id="copyBtn" disabled>
+                        <i class="far fa-copy"></i> 复制结果内容
+                    </button>
+                </div>
+
+                <div class="result-header">
+                    <h3>转换结果</h3>
+                    <div class="result-stats" id="resultStats">0 个项目</div>
+                </div>
+
+                <div class="preview-area">
+                    <!-- 文本预览区域 -->
+                    <pre class="preview-content" id="previewContent">转换结果将在此处显示...</pre>
+                    <!-- CSV表格预览区域 -->
+                    <div class="csv-preview" id="csvPreview"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面元素引用
+        const fileInput = document.getElementById('fileInput');
+        const selectFileBtn = document.getElementById('selectFileBtn');
+        const dropArea = document.getElementById('dropArea');
+        const extractBtn = document.getElementById('extractBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const previewContent = document.getElementById('previewContent');
+        const csvPreview = document.getElementById('csvPreview');
+        const fileInfo = document.getElementById('fileInfo');
+        const resultInfo = document.getElementById('resultInfo');
+        const resultStats = document.getElementById('resultStats');
+        const connectorSelect = document.getElementById('connector');
+        const separatorSelect = document.getElementById('separator');
+
+        // 新增元素引用
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const manualInput = document.getElementById('manualInput');
+        const convertBtn = document.getElementById('convertBtn');
+        const outputColumns = document.getElementById('outputColumns');
+
+        // 存储提取的数据
+        let extractedData = [];
+        let currentFileName = '';
+        let currentMode = 'csv-extract'; // 当前模式: csv-extract 或 manual-convert
+
+        // 事件监听器
+        selectFileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+        extractBtn.addEventListener('click', extractData);
+        downloadBtn.addEventListener('click', downloadResult);
+        copyBtn.addEventListener('click', copyToClipboard);
+
+        // 新增：选项卡切换
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+
+        // 新增：手动转换按钮
+        convertBtn.addEventListener('click', convertManualInput);
+
+        // 拖放功能
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#4b6cb7';
+            dropArea.style.backgroundColor = '#f0f4ff';
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.style.borderColor = '#b8c2cc';
+            dropArea.style.backgroundColor = 'white';
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#b8c2cc';
+            dropArea.style.backgroundColor = 'white';
+
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+
+        // 新增：选项卡切换函数
+        function switchTab(tabId) {
+            // 更新当前模式
+            currentMode = tabId;
+
+            // 更新选项卡按钮状态
+            tabBtns.forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // 更新选项卡内容
+            tabContents.forEach(content => {
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+
+            // 更新结果信息
+            if (tabId === 'csv-extract') {
+                resultInfo.innerHTML = `<i class="fas fa-info-circle"></i><span>选择CSV文件开始提取IP和端口信息</span>`;
+                downloadBtn.innerHTML = '<i class="fas fa-download"></i> 下载提取结果';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i> 复制提取结果';
+            } else {
+                resultInfo.innerHTML = `<i class="fas fa-info-circle"></i><span>输入IP和端口数据，转换为CSV表格格式</span>`;
+                downloadBtn.innerHTML = '<i class="fas fa-download"></i> 下载CSV文件';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i> 复制CSV内容';
+            }
+
+            // 清空预览
+            previewContent.textContent = '转换结果将在此处显示...';
+            csvPreview.innerHTML = '';
+            resultStats.textContent = '0 个项目';
+            downloadBtn.disabled = true;
+            copyBtn.disabled = true;
+        }
+
+        // 处理文件选择
+        function handleFileSelect() {
+            if (!fileInput.files.length) return;
+
+            const file = fileInput.files[0];
+            currentFileName = file.name;
+            fileInfo.textContent = `已选择文件: ${file.name} (${formatFileSize(file.size)})`;
+
+            // 自动提取数据
+            extractData();
+        }
+
+        // 提取数据（原有功能）
+        function extractData() {
+            if (!fileInput.files.length) {
+                alert('请先选择一个CSV文件');
+                return;
+            }
+
+            if (fileInput.files.length) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const csvData = e.target.result;
+                    parseCSVData(csvData);
+                };
+
+                reader.readAsText(file);
+            }
+        }
+
+        // 修复：解析CSV数据，增强IP和端口列匹配
+        function parseCSVData(csvText) {
+            extractedData = [];
+
+            // 分割CSV行
+            const lines = csvText.split('\n').filter(line => line.trim() !== '');
+
+            if (lines.length === 0) {
+                showResult([], 'CSV文件为空或格式不正确');
+                return;
+            }
+
+            // 解析表头，尝试检测IP和端口列
+            const headers = lines[0].split(',').map(h => h.trim());
+
+            // 尝试找到IP和端口列
+            let ipColumn = -1;
+            let portColumn = -1;
+
+            // 扩展的IP列名称（包含中文和英文）
+            const ipKeywords = ['ip', 'ip地址', '地址', 'IP', 'IP地址', 'IP 地址'];
+            // 扩展的端口列名称
+            const portKeywords = ['port', '端口', 'Port', 'Ports'];
+            // host列名称（但不作为首选）
+            const hostKeywords = ['host', 'Host', 'HOST', '服务器', '网址', '域名'];
+
+            // 查找IP列（不区分大小写，支持中文）
+            for (let i = 0; i < headers.length; i++) {
+                const header = headers[i].toLowerCase().replace(/\s+/g, '');
+
+                for (const keyword of ipKeywords) {
+                    const keywordLower = keyword.toLowerCase();
+                    if (header.includes(keywordLower) || keywordLower.includes(header)) {
+                        ipColumn = i;
+                        break;
+                    }
+                }
+                if (ipColumn !== -1) break;
+            }
+
+            // 查找端口列（不区分大小写，支持中文）
+            for (let i = 0; i < headers.length; i++) {
+                const header = headers[i].toLowerCase().replace(/\s+/g, '');
+
+                for (const keyword of portKeywords) {
+                    const keywordLower = keyword.toLowerCase();
+                    if (header.includes(keywordLower) || keywordLower.includes(header)) {
+                        portColumn = i;
+                        break;
+                    }
+                }
+                if (portColumn !== -1) break;
+            }
+
+            // 如果未找到标准列，尝试启发式检测
+            if (ipColumn === -1 || portColumn === -1) {
+                // 检查所有行数据，尝试检测IP:端口格式
+                let foundIpCol = -1;
+                let foundPortCol = -1;
+
+                // 检查前几行数据（最多5行）
+                const rowsToCheck = Math.min(5, lines.length);
+
+                for (let rowIndex = 1; rowIndex < rowsToCheck; rowIndex++) {
+                    const cells = lines[rowIndex].split(',').map(cell => cell.trim());
+
+                    // 尝试在每个列中查找IP地址
+                    for (let i = 0; i < cells.length; i++) {
+                        const cell = cells[i];
+
+                        // 检测IP地址
+                        if (isIPAddress(cell)) {
+                            if (foundIpCol === -1) foundIpCol = i;
+                        }
+
+                        // 检测端口号
+                        if (isPortNumber(cell)) {
+                            if (foundPortCol === -1) foundPortCol = i;
+                        }
+
+                        // 检测IP:端口格式
+                        if (cell.includes(':') && cell.split(':').length === 2) {
+                            const parts = cell.split(':');
+                            if (isIPAddress(parts[0]) && isPortNumber(parts[1])) {
+                                if (foundIpCol === -1) foundIpCol = i;
+                                if (foundPortCol === -1) foundPortCol = i;
+                            }
+                        }
+                    }
+
+                    // 如果找到了，就停止检查
+                    if (foundIpCol !== -1 && foundPortCol !== -1) break;
+                }
+
+                if (foundIpCol !== -1 && ipColumn === -1) ipColumn = foundIpCol;
+                if (foundPortCol !== -1 && portColumn === -1) portColumn = foundPortCol;
+            }
+
+            // 如果仍然未找到，使用列索引检测
+            if (ipColumn === -1) {
+                // 尝试找第一列作为IP列
+                ipColumn = 0;
+            }
+
+            if (portColumn === -1) {
+                // 尝试找最后一列作为端口列
+                if (lines.length > 1) {
+                    const firstDataRow = lines[1].split(',');
+                    portColumn = firstDataRow.length - 1;
+                } else {
+                    portColumn = 1;
+                }
+            }
+
+            // 提取数据行
+            for (let i = 1; i < lines.length; i++) {
+                const cells = lines[i].split(',').map(cell => cell.trim());
+
+                // 确保有足够的列
+                if (cells.length > Math.max(ipColumn, portColumn)) {
+                    let ip = '';
+                    let port = '';
+
+                    // 首先从IP列和端口列提取
+                    if (ipColumn >= 0 && ipColumn < cells.length) {
+                        ip = cells[ipColumn];
+                    }
+
+                    if (portColumn >= 0 && portColumn < cells.length) {
+                        port = cells[portColumn];
+                    }
+
+                    // 清理和验证从IP列和端口列提取的数据
+                    ip = cleanIP(ip);
+                    port = cleanPort(port);
+
+                    let isValidFromColumns = isIPAddress(ip) && isPortNumber(port);
+
+                    // 如果从指定列提取的数据无效，尝试从其他列提取
+                    if (!isValidFromColumns) {
+                        // 遍历所有列，尝试提取IP和端口
+                        for (let colIndex = 0; colIndex < cells.length; colIndex++) {
+                            const cell = cells[colIndex];
+
+                            // 跳过已检查的列
+                            if (colIndex === ipColumn || colIndex === portColumn) continue;
+
+                            // 尝试从单元格中提取IP和端口
+                            const extracted = extractIPAndPortFromCell(cell);
+
+                            if (extracted.ip && extracted.port) {
+                                // 如果还没有找到有效的IP，使用这个
+                                if (!ip && isIPAddress(extracted.ip)) {
+                                    ip = extracted.ip;
+                                }
+
+                                // 如果还没有找到有效的端口，使用这个
+                                if (!port && isPortNumber(extracted.port)) {
+                                    port = extracted.port;
+                                }
+                            }
+
+                            // 如果已经找到IP和端口，停止搜索
+                            if (ip && port && isIPAddress(ip) && isPortNumber(port)) {
+                                break;
+                            }
+                        }
+                    }
+
+                    // 验证IP和端口
+                    if (isIPAddress(ip) && isPortNumber(port)) {
+                        extractedData.push({ ip, port, protocol: 'tcp', original: `${ip}:${port}` });
+                    }
+                }
+            }
+
+            // 显示结果
+            showResult(extractedData, `成功从 ${lines.length - 1} 行数据中提取到 ${extractedData.length} 个有效的IP和端口组合`);
+        }
+
+        // 新增：从单元格中提取IP和端口
+        function extractIPAndPortFromCell(cell) {
+            let ip = '';
+            let port = '';
+
+            if (!cell) return { ip, port };
+
+            // 清理单元格内容
+            cell = cell.trim();
+
+            // 尝试匹配各种格式
+            // 格式1: http://8.216.2.111:449 或 https://8.216.2.111:449
+            const urlPattern = /(?:https?:\/\/)?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(\d{1,5})/i;
+            const urlMatch = cell.match(urlPattern);
+            if (urlMatch) {
+                ip = urlMatch[1];
+                port = urlMatch[2];
+                return { ip, port };
+            }
+
+            // 格式2: 59.30.209.190:27017
+            const ipPortPattern = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(\d{1,5})/;
+            const ipPortMatch = cell.match(ipPortPattern);
+            if (ipPortMatch) {
+                ip = ipPortMatch[1];
+                port = ipPortMatch[2];
+                return { ip, port };
+            }
+
+            // 格式3: 单独的IP地址
+            const ipPattern = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/;
+            const ipMatch = cell.match(ipPattern);
+            if (ipMatch) {
+                ip = ipMatch[1];
+            }
+
+            // 格式4: 单独的端口号
+            const portPattern = /(\d{1,5})/;
+            const portMatch = cell.match(portPattern);
+            if (portMatch) {
+                port = portMatch[1];
+            }
+
+            return { ip, port };
+        }
+
+        // 新增：手动输入转换
+        function convertManualInput() {
+            const inputText = manualInput.value.trim();
+
+            if (!inputText) {
+                alert('请输入IP和端口数据');
+                return;
+            }
+
+            extractedData = parseManualInput(inputText);
+
+            if (extractedData.length === 0) {
+                showResult([], '未找到有效的IP和端口数据');
+                return;
+            }
+
+            showResult(extractedData, `成功从输入中解析到 ${extractedData.length} 个有效的IP和端口组合`);
+        }
+
+        // 新增：解析手动输入 - 增强版，支持单行多组合
+        function parseManualInput(text) {
+            const results = [];
+
+            // 首先按换行分割成行
+            const lines = text.split('\n');
+
+            // 协议检测正则
+            const protocolPattern = /^(https?):\/\//i;
+
+            // 用于提取IP和端口的正则表达式
+            const ipPortPatterns = [
+                // 格式1: IP:端口 (支持IPv4和域名)
+                /(?:https?:\/\/)?((?:\d{1,3}\.){3}\d{1,3}|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}):(\d{1,5})/gi,
+                // 格式2: IP 端口 (空格分隔)
+                /(?:https?:\/\/)?((?:\d{1,3}\.){3}\d{1,3}|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\s+(\d{1,5})/gi,
+                // 格式3: IP-端口
+                /(?:https?:\/\/)?((?:\d{1,3}\.){3}\d{1,3}|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})-(\d{1,5})/gi,
+                // 格式4: IP|端口
+                /(?:https?:\/\/)?((?:\d{1,3}\.){3}\d{1,3}|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\|(\d{1,5})/gi,
+            ];
+
+            for (let line of lines) {
+                line = line.trim();
+                if (!line || line.startsWith('#')) continue; // 跳过空行和注释
+
+                // 检查整行是否有常见分隔符（逗号、分号、空格、竖线）
+                // 如果有，先按这些分隔符分割
+                let items = [line];
+
+                // 尝试按常见多组合分隔符分割
+                const multiDelimiters = /[,;|]+/;
+                if (multiDelimiters.test(line)) {
+                    items = line.split(multiDelimiters).filter(item => item.trim());
+                }
+                // 如果没有多分隔符，但可能有多个空格分隔的组合
+                else if (line.includes('  ') || /\s+\d{1,5}\s+/.test(line)) {
+                    // 尝试按连续空格分割，但保留IP和端口之间的单个空格
+                    // 这是一个更复杂的正则，用于分割多个组合
+                    const complexSplit = /((?:\d{1,3}\.){3}\d{1,3}|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})[:\-|]?\d{1,5}/g;
+                    const matches = line.match(complexSplit);
+                    if (matches && matches.length > 1) {
+                        items = matches;
+                    }
+                }
+
+                // 处理每个可能的组合
+                for (let item of items) {
+                    item = item.trim();
+                    if (!item) continue;
+
+                    let ip = '';
+                    let port = '';
+                    let protocol = 'tcp';
+                    let original = item;
+
+                    // 检测协议
+                    if (protocolPattern.test(item)) {
+                        protocol = item.match(protocolPattern)[1].toLowerCase();
+                        // 移除协议部分
+                        item = item.replace(protocolPattern, '');
+                    }
+
+                    // 尝试每种模式匹配
+                    let matched = false;
+                    for (const pattern of ipPortPatterns) {
+                        // 重置正则表达式的lastIndex
+                        pattern.lastIndex = 0;
+
+                        const match = pattern.exec(item);
+                        if (match) {
+                            ip = match[1].trim();
+                            port = match[2].trim();
+
+                            // 验证端口
+                            const portNum = parseInt(port);
+                            if (portNum >= 1 && portNum <= 65535) {
+                                port = portNum.toString();
+                                matched = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // 如果上面的模式都没匹配到，尝试更通用的匹配
+                    if (!matched) {
+                        // 尝试查找IP和端口的组合，不指定分隔符
+                        const genericPattern = /(?:https?:\/\/)?((?:\d{1,3}\.){3}\d{1,3}|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}).*?(\d{1,5})/i;
+                        const genericMatch = item.match(genericPattern);
+
+                        if (genericMatch) {
+                            ip = genericMatch[1].trim();
+                            port = genericMatch[2].trim();
+
+                            // 验证端口
+                            const portNum = parseInt(port);
+                            if (portNum >= 1 && portNum <= 65535) {
+                                port = portNum.toString();
+                                matched = true;
+                            }
+                        }
+                    }
+
+                    if (matched && ip && port) {
+                        // 清理IP（移除可能的额外字符）
+                        ip = cleanIP(ip);
+
+                        results.push({
+                            ip: ip,
+                            port: port,
+                            protocol: protocol,
+                            original: original,
+                            url: protocol === 'tcp' ? `http://${ip}:${port}` : `${protocol}://${ip}:${port}`
+                        });
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        // 显示结果
+        function showResult(data, message) {
+            if (data.length === 0) {
+                previewContent.textContent = '未找到有效的IP和端口数据';
+                previewContent.style.display = 'block';
+                csvPreview.style.display = 'none';
+                resultStats.textContent = '0 个项目';
+                downloadBtn.disabled = true;
+                copyBtn.disabled = true;
+                resultInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i><span>${message}</span>`;
+                return;
+            }
+
+            // 根据当前模式显示不同的结果
+            if (currentMode === 'csv-extract') {
+                displayTextResult(data, message);
+            } else {
+                displayCsvResult(data, message);
+            }
+
+            // 更新UI
+            resultStats.textContent = `${data.length} 个项目`;
+            downloadBtn.disabled = false;
+            copyBtn.disabled = false;
+
+            // 更新结果信息
+            resultInfo.innerHTML = `<i class="fas fa-check-circle"></i><span>${message}</span>`;
+        }
+
+        // 显示文本结果（原有功能）
+        function displayTextResult(data, message) {
+            // 获取配置选项
+            const connector = connectorSelect.value;
+            const separator = separatorSelect.value === '\\n' ? '\n' : separatorSelect.value;
+
+            // 生成结果文本
+            let resultText = '';
+
+            data.forEach(item => {
+                resultText += `${item.ip}${connector}${item.port}${separator}`;
+            });
+
+            // 移除最后一个分隔符
+            if (separator.length > 0) {
+                resultText = resultText.slice(0, -separator.length);
+            }
+
+            // 更新预览
+            previewContent.textContent = resultText;
+            previewContent.style.display = 'block';
+            csvPreview.style.display = 'none';
+        }
+
+        // 新增：显示CSV表格结果
+        function displayCsvResult(data, message) {
+            const columns = outputColumns.value.split(',');
+
+            // 生成CSV内容
+            let csvContent = columns.join(',') + '\n';
+
+            data.forEach(item => {
+                const row = columns.map(col => {
+                    if (col === 'ip') return item.ip;
+                    if (col === 'port') return item.port;
+                    if (col === 'protocol') return item.protocol;
+                    if (col === 'url') return item.url;
+                    if (col === 'original') return `"${item.original}"`;
+                    return '';
+                });
+                csvContent += row.join(',') + '\n';
+            });
+
+            // 生成表格HTML
+            let tableHtml = '<table class="csv-table">';
+
+            // 表头
+            tableHtml += '<thead><tr>';
+            columns.forEach(col => {
+                let displayName = col;
+                if (col === 'ip') displayName = 'IP地址';
+                if (col === 'port') displayName = '端口';
+                if (col === 'protocol') displayName = '协议';
+                if (col === 'url') displayName = 'URL';
+                if (col === 'original') displayName = '原始输入';
+                tableHtml += `<th>${displayName}</th>`;
+            });
+            tableHtml += '</tr></thead>';
+
+            // 表格内容
+            tableHtml += '<tbody>';
+            data.forEach(item => {
+                tableHtml += '<tr>';
+                columns.forEach(col => {
+                    let value = '';
+                    if (col === 'ip') value = item.ip;
+                    if (col === 'port') value = item.port;
+                    if (col === 'protocol') value = item.protocol;
+                    if (col === 'url') value = item.url;
+                    if (col === 'original') value = item.original;
+                    tableHtml += `<td>${value}</td>`;
+                });
+                tableHtml += '</tr>';
+            });
+            tableHtml += '</tbody></table>';
+
+            // 更新预览
+            csvPreview.innerHTML = tableHtml;
+            previewContent.style.display = 'none';
+            csvPreview.style.display = 'block';
+
+            // 保存CSV内容到预览区域（用于复制和下载）
+            previewContent.textContent = csvContent;
+        }
+
+        // 下载结果
+        function downloadResult() {
+            if (extractedData.length === 0) return;
+
+            let content, fileName, mimeType;
+
+            if (currentMode === 'csv-extract') {
+                // 文本格式下载
+                const connector = connectorSelect.value;
+                const separator = separatorSelect.value === '\\n' ? '\n' : separatorSelect.value;
+
+                let text = '';
+                extractedData.forEach(item => {
+                    text += `${item.ip}${connector}${item.port}${separator}`;
+                });
+
+                if (separator.length > 0) {
+                    text = text.slice(0, -separator.length);
+                }
+
+                content = text;
+                fileName = `${currentFileName.replace('.csv', '') || '提取结果'}_${getTimestamp()}.txt`;
+                mimeType = 'text/plain;charset=utf-8';
+            } else {
+                // CSV格式下载
+                const columns = outputColumns.value.split(',');
+                let csvContent = '\ufeff' + columns.join(',') + '\n'; // 添加BOM标记以确保Excel正确识别UTF-8
+
+                extractedData.forEach(item => {
+                    const row = columns.map(col => {
+                        if (col === 'ip') return item.ip;
+                        if (col === 'port') return item.port;
+                        if (col === 'protocol') return item.protocol;
+                        if (col === 'url') return item.url;
+                        if (col === 'original') return `"${item.original}"`;
+                        return '';
+                    });
+                    csvContent += row.join(',') + '\n';
+                });
+
+                content = csvContent;
+                fileName = `手动转换_${getTimestamp()}.csv`;
+                mimeType = 'text/csv;charset=utf-8';
+            }
+
+            downloadFile(content, fileName, mimeType);
+        }
+
+        // 新增：通用文件下载函数
+        function downloadFile(content, fileName, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // 显示下载成功提示
+            const originalText = resultInfo.innerHTML;
+            resultInfo.innerHTML = `<i class="fas fa-check-circle"></i><span>文件已下载: ${fileName}</span>`;
+
+            setTimeout(() => {
+                resultInfo.innerHTML = originalText;
+            }, 3000);
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard() {
+            let text;
+
+            if (currentMode === 'csv-extract') {
+                text = previewContent.textContent;
+            } else {
+                text = previewContent.textContent; // 保存的是CSV内容
+            }
+
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    // 显示复制成功提示
+                    const originalText = resultInfo.innerHTML;
+                    resultInfo.innerHTML = `<i class="fas fa-check-circle"></i><span>已复制 ${extractedData.length} 个项目到剪贴板</span>`;
+
+                    setTimeout(() => {
+                        resultInfo.innerHTML = originalText;
+                    }, 3000);
+                })
+                .catch(err => {
+                    console.error('复制失败: ', err);
+                    alert('复制到剪贴板失败，请手动选择文本复制');
+                });
+        }
+
+        // 工具函数
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function isIPAddress(str) {
+            // 简单的IP地址验证
+            const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
+            if (!ipRegex.test(str)) return false;
+
+            // 验证每个部分在0-255之间
+            const parts = str.split('.');
+            for (let part of parts) {
+                const num = parseInt(part, 10);
+                if (num < 0 || num > 255) return false;
+            }
+
+            return true;
+        }
+
+        function isPortNumber(str) {
+            const port = parseInt(str, 10);
+            return !isNaN(port) && port >= 1 && port <= 65535;
+        }
+
+        function cleanIP(ip) {
+            // 移除URL部分，只保留IP
+            if (ip.includes('://')) {
+                ip = ip.split('://')[1];
+            }
+
+            // 移除端口部分
+            if (ip.includes(':')) {
+                ip = ip.split(':')[0];
+            }
+
+            // 移除路径部分
+            if (ip.includes('/')) {
+                ip = ip.split('/')[0];
+            }
+
+            return ip.trim();
+        }
+
+        function cleanPort(port) {
+            // 移除非数字字符
+            return port.replace(/\D/g, '');
+        }
+
+        // 新增：时间戳生成
+        function getTimestamp() {
+            return new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            resultInfo.innerHTML = `<i class="fas fa-info-circle"></i><span>选择功能并输入数据开始转换...</span>`;
+        });
+    </script>
+</body>
+
+</html>
