@@ -1,0 +1,28 @@
+name: Update Pages Index
+
+on:
+  push:
+    branches: [ main, master ]
+  schedule:
+    - cron: '0 0 * * *'  # 每天更新一次
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Generate pages list
+      run: |
+        # 生成HTML文件列表
+        find . -name "*.html" -not -name "index.html" | sort > html_list.txt
+        echo "找到 $(wc -l < html_list.txt) 个HTML文件"
+    - name: Update index.html
+      run: |
+        python3 generate_index.py
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add index.html
+        git commit -m "Update pages index" || echo "No changes to commit"
+        git push
