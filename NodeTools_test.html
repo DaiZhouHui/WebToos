@@ -95,7 +95,6 @@
             transition: all 0.3s;
             background-color: white;
             cursor: pointer;
-            position: relative;
         }
 
         .upload-area:hover {
@@ -170,14 +169,6 @@
 
         .btn-copy:hover {
             background-color: #2c5282;
-        }
-
-        .btn-clear {
-            background-color: #e53e3e;
-        }
-
-        .btn-clear:hover {
-            background-color: #c53030;
         }
 
         .config-section {
@@ -273,8 +264,6 @@
             justify-content: flex-start;
             margin-bottom: 12px;
             margin-top: 0;
-            gap: 6px;
-            flex-wrap: wrap;
         }
 
         /* 新增：功能选项卡样式 */
@@ -353,100 +342,6 @@
             background-color: #ebf8ff;
         }
 
-        /* 新增：多文件上传相关样式 */
-        .file-list {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 10px;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-            padding: 8px;
-            background-color: #f8fafc;
-        }
-
-        .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 8px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 12px;
-        }
-
-        .file-item:last-child {
-            border-bottom: none;
-        }
-
-        .file-name {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            margin-right: 10px;
-        }
-
-        .file-size {
-            color: #718096;
-            font-size: 11px;
-            margin-right: 10px;
-        }
-
-        .file-remove {
-            color: #e53e3e;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-            padding: 2px 6px;
-            border-radius: 3px;
-        }
-
-        .file-remove:hover {
-            background-color: #fed7d7;
-        }
-
-        .multi-file-options {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            margin-bottom: 15px;
-        }
-
-        .multi-file-options .btn {
-            flex: 1;
-        }
-
-        .batch-processing {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f0fff4;
-            border: 1px solid #c6f6d5;
-            border-radius: 4px;
-            font-size: 12px;
-            display: none;
-        }
-
-        .progress-bar {
-            height: 6px;
-            background-color: #e2e8f0;
-            border-radius: 3px;
-            margin-top: 8px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: #38a169;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .source-column {
-            font-size: 10px;
-            color: #718096;
-            font-style: italic;
-        }
-
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -482,7 +377,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-file-csv"></i> IP与端口转换工具</h1>
-            <p class="subtitle">支持多文件CSV批量提取和手动输入转换，生成标准化的CSV表格</p>
+            <p class="subtitle">支持CSV文件提取和手动输入转换，生成标准化的CSV表格</p>
         </header>
 
         <div class="main-content">
@@ -490,53 +385,30 @@
             <div class="left-panel">
                 <div class="function-tabs">
                     <button class="tab-btn active" data-tab="csv-extract">
-                        <i class="fas fa-file-import"></i> CSV批量提取
+                        <i class="fas fa-file-import"></i> CSV提取
                     </button>
                     <button class="tab-btn" data-tab="manual-convert">
                         <i class="fas fa-keyboard"></i> 手动转换
                     </button>
                 </div>
 
-                <!-- CSV批量提取功能（增强功能） -->
+                <!-- CSV提取功能（原有功能） -->
                 <div id="csv-extract" class="tab-content active">
                     <div class="panel-title">
-                        <i class="fas fa-upload"></i> CSV文件批量提取
+                        <i class="fas fa-upload"></i> CSV文件提取
                     </div>
 
                     <div class="upload-area" id="dropArea">
                         <i class="fas fa-cloud-upload-alt"></i>
-                        <h3>拖放CSV文件到此处（支持1-100个文件）</h3>
-                        <p>或点击选择文件上传（支持多选）</p>
-                        <input type="file" id="fileInput" accept=".csv" multiple hidden>
+                        <h3>拖放CSV文件到此处</h3>
+                        <p>或点击选择文件上传</p>
+                        <input type="file" id="fileInput" accept=".csv" hidden>
                         <button class="btn btn-upload" id="selectFileBtn">选择CSV文件</button>
-                        <p class="result-stats" id="fileInfo">未选择文件 (最多可选择100个文件)</p>
-                    </div>
-
-                    <!-- 文件列表显示 -->
-                    <div class="file-list" id="fileList" style="display: none;">
-                        <!-- 文件列表将在这里动态生成 -->
-                    </div>
-
-                    <!-- 批量操作按钮 -->
-                    <div class="multi-file-options">
-                        <button class="btn btn-clear" id="clearFilesBtn">
-                            <i class="fas fa-trash"></i> 清空文件
-                        </button>
-                        <button class="btn btn-upload" id="addMoreFilesBtn">
-                            <i class="fas fa-plus"></i> 添加更多
-                        </button>
-                    </div>
-
-                    <!-- 批量处理进度 -->
-                    <div class="batch-processing" id="batchProcessing">
-                        <div id="batchStatus">正在处理文件: 0/0</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
+                        <p class="result-stats" id="fileInfo">未选择文件</p>
                     </div>
 
                     <button class="btn btn-extract" id="extractBtn">
-                        <i class="fas fa-cogs"></i> 批量提取IP和端口信息
+                        <i class="fas fa-cogs"></i> 提取IP和端口信息
                     </button>
 
                     <div class="config-section">
@@ -564,18 +436,6 @@
                                 <option value="|">竖线 |</option>
                                 <option value=" ">空格</option>
                             </select>
-                        </div>
-
-                        <div class="config-item">
-                            <label for="batchOptions">
-                                <i class="fas fa-layer-group"></i> 批量处理选项
-                            </label>
-                            <select id="batchOptions">
-                                <option value="merge">合并所有结果</option>
-                                <option value="merge-deduplicate">合并并去重</option>
-                                <option value="keep-source">保留来源信息</option>
-                            </select>
-                            <div class="format-hint">"保留来源信息"选项会在结果中添加文件来源列</div>
                         </div>
                     </div>
                 </div>
@@ -642,14 +502,11 @@ https://192.168.1.6:8443
                     <button class="btn btn-copy" id="copyBtn" disabled>
                         <i class="far fa-copy"></i> 复制结果内容
                     </button>
-                    <button class="btn btn-clear" id="clearResultBtn" disabled>
-                        <i class="fas fa-broom"></i> 清空结果
-                    </button>
                 </div>
 
                 <div class="result-header">
                     <h3>转换结果</h3>
-                    <div class="result-stats" id="resultStats">0 个项目 (来自 0 个文件)</div>
+                    <div class="result-stats" id="resultStats">0 个项目</div>
                 </div>
 
                 <div class="preview-area">
@@ -670,7 +527,6 @@ https://192.168.1.6:8443
         const extractBtn = document.getElementById('extractBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const copyBtn = document.getElementById('copyBtn');
-        const clearResultBtn = document.getElementById('clearResultBtn');
         const previewContent = document.getElementById('previewContent');
         const csvPreview = document.getElementById('csvPreview');
         const fileInfo = document.getElementById('fileInfo');
@@ -678,7 +534,6 @@ https://192.168.1.6:8443
         const resultStats = document.getElementById('resultStats');
         const connectorSelect = document.getElementById('connector');
         const separatorSelect = document.getElementById('separator');
-        const batchOptions = document.getElementById('batchOptions');
 
         // 新增元素引用
         const tabBtns = document.querySelectorAll('.tab-btn');
@@ -686,18 +541,11 @@ https://192.168.1.6:8443
         const manualInput = document.getElementById('manualInput');
         const convertBtn = document.getElementById('convertBtn');
         const outputColumns = document.getElementById('outputColumns');
-        const fileList = document.getElementById('fileList');
-        const clearFilesBtn = document.getElementById('clearFilesBtn');
-        const addMoreFilesBtn = document.getElementById('addMoreFilesBtn');
-        const batchProcessing = document.getElementById('batchProcessing');
-        const batchStatus = document.getElementById('batchStatus');
-        const progressFill = document.getElementById('progressFill');
 
         // 存储提取的数据
         let extractedData = [];
-        let currentFiles = []; // 改为存储多个文件
+        let currentFileName = '';
         let currentMode = 'csv-extract'; // 当前模式: csv-extract 或 manual-convert
-        let fileSources = {}; // 记录数据来源文件
 
         // 事件监听器
         selectFileBtn.addEventListener('click', () => fileInput.click());
@@ -705,9 +553,6 @@ https://192.168.1.6:8443
         extractBtn.addEventListener('click', extractData);
         downloadBtn.addEventListener('click', downloadResult);
         copyBtn.addEventListener('click', copyToClipboard);
-        clearResultBtn.addEventListener('click', clearResult);
-        clearFilesBtn.addEventListener('click', clearFiles);
-        addMoreFilesBtn.addEventListener('click', () => fileInput.click());
 
         // 新增：选项卡切换
         tabBtns.forEach(btn => {
@@ -738,171 +583,10 @@ https://192.168.1.6:8443
             dropArea.style.backgroundColor = 'white';
 
             if (e.dataTransfer.files.length) {
-                handleDroppedFiles(e.dataTransfer.files);
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect();
             }
         });
-
-        // 新增：处理拖放的文件
-        function handleDroppedFiles(files) {
-            const validFiles = Array.from(files).filter(file => {
-                return file.name.toLowerCase().endsWith('.csv') || 
-                       file.type === 'text/csv' || 
-                       file.type === 'application/vnd.ms-excel';
-            });
-
-            if (validFiles.length === 0) {
-                alert('请拖放CSV文件！');
-                return;
-            }
-
-            // 检查总数是否超过100
-            if (currentFiles.length + validFiles.length > 100) {
-                alert(`最多只能选择100个文件！当前已选择${currentFiles.length}个文件。`);
-                return;
-            }
-
-            // 添加新文件到列表
-            addFilesToList(validFiles);
-        }
-
-        // 处理文件选择
-        function handleFileSelect() {
-            if (!fileInput.files.length) return;
-
-            const files = Array.from(fileInput.files);
-            
-            // 检查文件数量
-            if (files.length > 100) {
-                alert('最多只能选择100个文件！');
-                return;
-            }
-
-            // 检查文件类型
-            const invalidFiles = files.filter(file => {
-                return !file.name.toLowerCase().endsWith('.csv') && 
-                       file.type !== 'text/csv' && 
-                       file.type !== 'application/vnd.ms-excel';
-            });
-
-            if (invalidFiles.length > 0) {
-                alert(`以下文件不是CSV格式：${invalidFiles.map(f => f.name).join(', ')}`);
-                // 只保留有效的CSV文件
-                const validFiles = files.filter(file => 
-                    file.name.toLowerCase().endsWith('.csv') || 
-                    file.type === 'text/csv' || 
-                    file.type === 'application/vnd.ms-excel'
-                );
-                
-                if (validFiles.length === 0) return;
-                
-                addFilesToList(validFiles);
-            } else {
-                addFilesToList(files);
-            }
-        }
-
-        // 新增：添加文件到列表
-        function addFilesToList(files) {
-            // 过滤掉重复文件
-            const newFiles = files.filter(newFile => {
-                return !currentFiles.some(existingFile => 
-                    existingFile.name === newFile.name && 
-                    existingFile.size === newFile.size
-                );
-            });
-
-            if (newFiles.length === 0) {
-                alert('没有新文件可添加（可能已存在相同的文件）');
-                return;
-            }
-
-            // 添加到当前文件列表
-            currentFiles.push(...newFiles);
-
-            // 更新UI
-            updateFileListUI();
-        }
-
-        // 新增：更新文件列表UI
-        function updateFileListUI() {
-            if (currentFiles.length === 0) {
-                fileList.style.display = 'none';
-                fileInfo.textContent = '未选择文件 (最多可选择100个文件)';
-                return;
-            }
-
-            // 显示文件列表
-            fileList.style.display = 'block';
-            
-            // 计算总大小
-            const totalSize = currentFiles.reduce((sum, file) => sum + file.size, 0);
-            
-            // 更新文件信息
-            fileInfo.textContent = `已选择 ${currentFiles.length} 个文件 (总共 ${formatFileSize(totalSize)})`;
-
-            // 生成文件列表HTML
-            let fileListHTML = '';
-            
-            currentFiles.forEach((file, index) => {
-                fileListHTML += `
-                    <div class="file-item" data-index="${index}">
-                        <div class="file-name" title="${file.name}">
-                            <i class="fas fa-file-csv"></i> ${file.name}
-                        </div>
-                        <div class="file-size">${formatFileSize(file.size)}</div>
-                        <button class="file-remove" data-index="${index}">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
-            });
-
-            fileList.innerHTML = fileListHTML;
-
-            // 为删除按钮添加事件监听器
-            document.querySelectorAll('.file-remove').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const index = parseInt(btn.getAttribute('data-index'));
-                    removeFile(index);
-                });
-            });
-        }
-
-        // 新增：移除单个文件
-        function removeFile(index) {
-            if (index >= 0 && index < currentFiles.length) {
-                currentFiles.splice(index, 1);
-                updateFileListUI();
-            }
-        }
-
-        // 新增：清空文件列表
-        function clearFiles() {
-            if (currentFiles.length === 0) return;
-            
-            if (confirm(`确定要清空 ${currentFiles.length} 个文件吗？`)) {
-                currentFiles = [];
-                fileInput.value = ''; // 清空文件输入
-                updateFileListUI();
-                
-                // 同时清空结果
-                clearResult();
-            }
-        }
-
-        // 新增：清空结果
-        function clearResult() {
-            extractedData = [];
-            fileSources = {};
-            previewContent.textContent = '转换结果将在此处显示...';
-            csvPreview.innerHTML = '';
-            resultStats.textContent = '0 个项目 (来自 0 个文件)';
-            downloadBtn.disabled = true;
-            copyBtn.disabled = true;
-            clearResultBtn.disabled = true;
-            resultInfo.innerHTML = `<i class="fas fa-info-circle"></i><span>选择功能并输入数据开始转换...</span>`;
-        }
 
         // 新增：选项卡切换函数
         function switchTab(tabId) {
@@ -939,299 +623,223 @@ https://192.168.1.6:8443
             }
 
             // 清空预览
-            clearResult();
+            previewContent.textContent = '转换结果将在此处显示...';
+            csvPreview.innerHTML = '';
+            resultStats.textContent = '0 个项目';
+            downloadBtn.disabled = true;
+            copyBtn.disabled = true;
         }
 
-        // 提取数据（增强功能，支持多文件）
-        async function extractData() {
-            if (currentFiles.length === 0) {
-                alert('请先选择CSV文件');
+        // 处理文件选择
+        function handleFileSelect() {
+            if (!fileInput.files.length) return;
+
+            const file = fileInput.files[0];
+            currentFileName = file.name;
+            fileInfo.textContent = `已选择文件: ${file.name} (${formatFileSize(file.size)})`;
+
+            // 自动提取数据
+            extractData();
+        }
+
+        // 提取数据（原有功能）
+        function extractData() {
+            if (!fileInput.files.length) {
+                alert('请先选择一个CSV文件');
                 return;
             }
 
-            // 重置数据
-            extractedData = [];
-            fileSources = {};
-            
-            // 显示批量处理进度
-            batchProcessing.style.display = 'block';
-            batchStatus.textContent = `正在处理文件: 0/${currentFiles.length}`;
-            progressFill.style.width = '0%';
+            if (fileInput.files.length) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
 
-            // 批量处理选项
-            const batchOption = batchOptions.value;
-            const keepSourceInfo = batchOption === 'keep-source';
-            const deduplicate = batchOption === 'merge-deduplicate';
+                reader.onload = function (e) {
+                    const csvData = e.target.result;
+                    parseCSVData(csvData);
+                };
 
-            // 用于去重的集合
-            const uniqueSet = new Set();
-
-            try {
-                for (let i = 0; i < currentFiles.length; i++) {
-                    const file = currentFiles[i];
-                    
-                    // 更新进度
-                    batchStatus.textContent = `正在处理文件: ${i + 1}/${currentFiles.length} - ${file.name}`;
-                    progressFill.style.width = `${((i + 1) / currentFiles.length) * 100}%`;
-
-                    // 读取并解析文件
-                    const fileData = await readFileAsync(file);
-                    const parsedData = await parseCSVData(fileData, file.name);
-                    
-                    // 根据选项处理数据
-                    parsedData.forEach(item => {
-                        // 如果保留来源信息，添加来源字段
-                        if (keepSourceInfo) {
-                            item.source = file.name;
-                        }
-                        
-                        // 生成唯一键用于去重
-                        const uniqueKey = `${item.ip}:${item.port}`;
-                        
-                        // 检查是否需要去重
-                        if (deduplicate && uniqueSet.has(uniqueKey)) {
-                            return; // 跳过重复项
-                        }
-                        
-                        // 添加到集合和结果数组
-                        uniqueSet.add(uniqueKey);
-                        extractedData.push(item);
-                        
-                        // 记录来源
-                        if (!fileSources[file.name]) {
-                            fileSources[file.name] = 0;
-                        }
-                        fileSources[file.name]++;
-                    });
-                }
-
-                // 隐藏进度条
-                batchProcessing.style.display = 'none';
-
-                // 显示结果
-                const fileCount = Object.keys(fileSources).length;
-                const totalCount = extractedData.length;
-                
-                let sourceInfo = '';
-                if (keepSourceInfo) {
-                    sourceInfo = Object.entries(fileSources)
-                        .map(([fileName, count]) => `${fileName}: ${count} 项`)
-                        .join('; ');
-                }
-
-                showResult(extractedData, 
-                    `成功从 ${fileCount} 个文件中提取到 ${totalCount} 个有效的IP和端口组合` + 
-                    (sourceInfo ? ` (${sourceInfo})` : ''));
-
-            } catch (error) {
-                console.error('批量处理出错:', error);
-                batchProcessing.style.display = 'none';
-                alert(`处理文件时出错: ${error.message}`);
+                reader.readAsText(file);
             }
         }
 
-        // 新增：异步读取文件
-        function readFileAsync(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    resolve(e.target.result);
-                };
-                
-                reader.onerror = function(e) {
-                    reject(new Error(`读取文件失败: ${file.name}`));
-                };
-                
-                reader.readAsText(file);
-            });
-        }
-
         // 修复：解析CSV数据，增强IP和端口列匹配
-        function parseCSVData(csvText, fileName) {
-            return new Promise((resolve) => {
-                const results = [];
+        function parseCSVData(csvText) {
+            extractedData = [];
 
-                // 分割CSV行
-                const lines = csvText.split('\n').filter(line => line.trim() !== '');
+            // 分割CSV行
+            const lines = csvText.split('\n').filter(line => line.trim() !== '');
 
-                if (lines.length === 0) {
-                    resolve(results);
-                    return;
-                }
+            if (lines.length === 0) {
+                showResult([], 'CSV文件为空或格式不正确');
+                return;
+            }
 
-                // 解析表头，尝试检测IP和端口列
-                const headers = lines[0].split(',').map(h => h.trim());
+            // 解析表头，尝试检测IP和端口列
+            const headers = lines[0].split(',').map(h => h.trim());
 
-                // 尝试找到IP和端口列
-                let ipColumn = -1;
-                let portColumn = -1;
+            // 尝试找到IP和端口列
+            let ipColumn = -1;
+            let portColumn = -1;
 
-                // 扩展的IP列名称（包含中文和英文）
-                const ipKeywords = ['ip', 'ip地址', '地址', 'IP', 'IP地址', 'IP 地址'];
-                // 扩展的端口列名称
-                const portKeywords = ['port', '端口', 'Port', 'Ports'];
-                // host列名称（但不作为首选）
-                const hostKeywords = ['host', 'Host', 'HOST', '服务器', '网址', '域名'];
+            // 扩展的IP列名称（包含中文和英文）
+            const ipKeywords = ['ip', 'ip地址', '地址', 'IP', 'IP地址', 'IP 地址'];
+            // 扩展的端口列名称
+            const portKeywords = ['port', '端口', 'Port', 'Ports'];
+            // host列名称（但不作为首选）
+            const hostKeywords = ['host', 'Host', 'HOST', '服务器', '网址', '域名'];
 
-                // 查找IP列（不区分大小写，支持中文）
-                for (let i = 0; i < headers.length; i++) {
-                    const header = headers[i].toLowerCase().replace(/\s+/g, '');
+            // 查找IP列（不区分大小写，支持中文）
+            for (let i = 0; i < headers.length; i++) {
+                const header = headers[i].toLowerCase().replace(/\s+/g, '');
 
-                    for (const keyword of ipKeywords) {
-                        const keywordLower = keyword.toLowerCase();
-                        if (header.includes(keywordLower) || keywordLower.includes(header)) {
-                            ipColumn = i;
-                            break;
-                        }
+                for (const keyword of ipKeywords) {
+                    const keywordLower = keyword.toLowerCase();
+                    if (header.includes(keywordLower) || keywordLower.includes(header)) {
+                        ipColumn = i;
+                        break;
                     }
-                    if (ipColumn !== -1) break;
                 }
+                if (ipColumn !== -1) break;
+            }
 
-                // 查找端口列（不区分大小写，支持中文）
-                for (let i = 0; i < headers.length; i++) {
-                    const header = headers[i].toLowerCase().replace(/\s+/g, '');
+            // 查找端口列（不区分大小写，支持中文）
+            for (let i = 0; i < headers.length; i++) {
+                const header = headers[i].toLowerCase().replace(/\s+/g, '');
 
-                    for (const keyword of portKeywords) {
-                        const keywordLower = keyword.toLowerCase();
-                        if (header.includes(keywordLower) || keywordLower.includes(header)) {
-                            portColumn = i;
-                            break;
-                        }
+                for (const keyword of portKeywords) {
+                    const keywordLower = keyword.toLowerCase();
+                    if (header.includes(keywordLower) || keywordLower.includes(header)) {
+                        portColumn = i;
+                        break;
                     }
-                    if (portColumn !== -1) break;
                 }
+                if (portColumn !== -1) break;
+            }
 
-                // 如果未找到标准列，尝试启发式检测
-                if (ipColumn === -1 || portColumn === -1) {
-                    // 检查所有行数据，尝试检测IP:端口格式
-                    let foundIpCol = -1;
-                    let foundPortCol = -1;
+            // 如果未找到标准列，尝试启发式检测
+            if (ipColumn === -1 || portColumn === -1) {
+                // 检查所有行数据，尝试检测IP:端口格式
+                let foundIpCol = -1;
+                let foundPortCol = -1;
 
-                    // 检查前几行数据（最多5行）
-                    const rowsToCheck = Math.min(5, lines.length);
+                // 检查前几行数据（最多5行）
+                const rowsToCheck = Math.min(5, lines.length);
 
-                    for (let rowIndex = 1; rowIndex < rowsToCheck; rowIndex++) {
-                        const cells = lines[rowIndex].split(',').map(cell => cell.trim());
+                for (let rowIndex = 1; rowIndex < rowsToCheck; rowIndex++) {
+                    const cells = lines[rowIndex].split(',').map(cell => cell.trim());
 
-                        // 尝试在每个列中查找IP地址
-                        for (let i = 0; i < cells.length; i++) {
-                            const cell = cells[i];
+                    // 尝试在每个列中查找IP地址
+                    for (let i = 0; i < cells.length; i++) {
+                        const cell = cells[i];
 
-                            // 检测IP地址
-                            if (isIPAddress(cell)) {
+                        // 检测IP地址
+                        if (isIPAddress(cell)) {
+                            if (foundIpCol === -1) foundIpCol = i;
+                        }
+
+                        // 检测端口号
+                        if (isPortNumber(cell)) {
+                            if (foundPortCol === -1) foundPortCol = i;
+                        }
+
+                        // 检测IP:端口格式
+                        if (cell.includes(':') && cell.split(':').length === 2) {
+                            const parts = cell.split(':');
+                            if (isIPAddress(parts[0]) && isPortNumber(parts[1])) {
                                 if (foundIpCol === -1) foundIpCol = i;
-                            }
-
-                            // 检测端口号
-                            if (isPortNumber(cell)) {
                                 if (foundPortCol === -1) foundPortCol = i;
                             }
+                        }
+                    }
 
-                            // 检测IP:端口格式
-                            if (cell.includes(':') && cell.split(':').length === 2) {
-                                const parts = cell.split(':');
-                                if (isIPAddress(parts[0]) && isPortNumber(parts[1])) {
-                                    if (foundIpCol === -1) foundIpCol = i;
-                                    if (foundPortCol === -1) foundPortCol = i;
+                    // 如果找到了，就停止检查
+                    if (foundIpCol !== -1 && foundPortCol !== -1) break;
+                }
+
+                if (foundIpCol !== -1 && ipColumn === -1) ipColumn = foundIpCol;
+                if (foundPortCol !== -1 && portColumn === -1) portColumn = foundPortCol;
+            }
+
+            // 如果仍然未找到，使用列索引检测
+            if (ipColumn === -1) {
+                // 尝试找第一列作为IP列
+                ipColumn = 0;
+            }
+
+            if (portColumn === -1) {
+                // 尝试找最后一列作为端口列
+                if (lines.length > 1) {
+                    const firstDataRow = lines[1].split(',');
+                    portColumn = firstDataRow.length - 1;
+                } else {
+                    portColumn = 1;
+                }
+            }
+
+            // 提取数据行
+            for (let i = 1; i < lines.length; i++) {
+                const cells = lines[i].split(',').map(cell => cell.trim());
+
+                // 确保有足够的列
+                if (cells.length > Math.max(ipColumn, portColumn)) {
+                    let ip = '';
+                    let port = '';
+
+                    // 首先从IP列和端口列提取
+                    if (ipColumn >= 0 && ipColumn < cells.length) {
+                        ip = cells[ipColumn];
+                    }
+
+                    if (portColumn >= 0 && portColumn < cells.length) {
+                        port = cells[portColumn];
+                    }
+
+                    // 清理和验证从IP列和端口列提取的数据
+                    ip = cleanIP(ip);
+                    port = cleanPort(port);
+
+                    let isValidFromColumns = isIPAddress(ip) && isPortNumber(port);
+
+                    // 如果从指定列提取的数据无效，尝试从其他列提取
+                    if (!isValidFromColumns) {
+                        // 遍历所有列，尝试提取IP和端口
+                        for (let colIndex = 0; colIndex < cells.length; colIndex++) {
+                            const cell = cells[colIndex];
+
+                            // 跳过已检查的列
+                            if (colIndex === ipColumn || colIndex === portColumn) continue;
+
+                            // 尝试从单元格中提取IP和端口
+                            const extracted = extractIPAndPortFromCell(cell);
+
+                            if (extracted.ip && extracted.port) {
+                                // 如果还没有找到有效的IP，使用这个
+                                if (!ip && isIPAddress(extracted.ip)) {
+                                    ip = extracted.ip;
+                                }
+
+                                // 如果还没有找到有效的端口，使用这个
+                                if (!port && isPortNumber(extracted.port)) {
+                                    port = extracted.port;
                                 }
                             }
-                        }
 
-                        // 如果找到了，就停止检查
-                        if (foundIpCol !== -1 && foundPortCol !== -1) break;
-                    }
-
-                    if (foundIpCol !== -1 && ipColumn === -1) ipColumn = foundIpCol;
-                    if (foundPortCol !== -1 && portColumn === -1) portColumn = foundPortCol;
-                }
-
-                // 如果仍然未找到，使用列索引检测
-                if (ipColumn === -1) {
-                    // 尝试找第一列作为IP列
-                    ipColumn = 0;
-                }
-
-                if (portColumn === -1) {
-                    // 尝试找最后一列作为端口列
-                    if (lines.length > 1) {
-                        const firstDataRow = lines[1].split(',');
-                        portColumn = firstDataRow.length - 1;
-                    } else {
-                        portColumn = 1;
-                    }
-                }
-
-                // 提取数据行
-                for (let i = 1; i < lines.length; i++) {
-                    const cells = lines[i].split(',').map(cell => cell.trim());
-
-                    // 确保有足够的列
-                    if (cells.length > Math.max(ipColumn, portColumn)) {
-                        let ip = '';
-                        let port = '';
-
-                        // 首先从IP列和端口列提取
-                        if (ipColumn >= 0 && ipColumn < cells.length) {
-                            ip = cells[ipColumn];
-                        }
-
-                        if (portColumn >= 0 && portColumn < cells.length) {
-                            port = cells[portColumn];
-                        }
-
-                        // 清理和验证从IP列和端口列提取的数据
-                        ip = cleanIP(ip);
-                        port = cleanPort(port);
-
-                        let isValidFromColumns = isIPAddress(ip) && isPortNumber(port);
-
-                        // 如果从指定列提取的数据无效，尝试从其他列提取
-                        if (!isValidFromColumns) {
-                            // 遍历所有列，尝试提取IP和端口
-                            for (let colIndex = 0; colIndex < cells.length; colIndex++) {
-                                const cell = cells[colIndex];
-
-                                // 跳过已检查的列
-                                if (colIndex === ipColumn || colIndex === portColumn) continue;
-
-                                // 尝试从单元格中提取IP和端口
-                                const extracted = extractIPAndPortFromCell(cell);
-
-                                if (extracted.ip && extracted.port) {
-                                    // 如果还没有找到有效的IP，使用这个
-                                    if (!ip && isIPAddress(extracted.ip)) {
-                                        ip = extracted.ip;
-                                    }
-
-                                    // 如果还没有找到有效的端口，使用这个
-                                    if (!port && isPortNumber(extracted.port)) {
-                                        port = extracted.port;
-                                    }
-                                }
-
-                                // 如果已经找到IP和端口，停止搜索
-                                if (ip && port && isIPAddress(ip) && isPortNumber(port)) {
-                                    break;
-                                }
+                            // 如果已经找到IP和端口，停止搜索
+                            if (ip && port && isIPAddress(ip) && isPortNumber(port)) {
+                                break;
                             }
                         }
+                    }
 
-                        // 验证IP和端口
-                        if (isIPAddress(ip) && isPortNumber(port)) {
-                            results.push({ 
-                                ip, 
-                                port, 
-                                protocol: 'tcp', 
-                                original: `${ip}:${port}`,
-                                fileName: fileName // 记录来源文件名
-                            });
-                        }
+                    // 验证IP和端口
+                    if (isIPAddress(ip) && isPortNumber(port)) {
+                        extractedData.push({ ip, port, protocol: 'tcp', original: `${ip}:${port}` });
                     }
                 }
+            }
 
-                resolve(results);
-            });
+            // 显示结果
+            showResult(extractedData, `成功从 ${lines.length - 1} 行数据中提取到 ${extractedData.length} 个有效的IP和端口组合`);
         }
 
         // 新增：从单元格中提取IP和端口
@@ -1426,10 +1034,9 @@ https://192.168.1.6:8443
                 previewContent.textContent = '未找到有效的IP和端口数据';
                 previewContent.style.display = 'block';
                 csvPreview.style.display = 'none';
-                resultStats.textContent = '0 个项目 (来自 0 个文件)';
+                resultStats.textContent = '0 个项目';
                 downloadBtn.disabled = true;
                 copyBtn.disabled = true;
-                clearResultBtn.disabled = true;
                 resultInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i><span>${message}</span>`;
                 return;
             }
@@ -1442,11 +1049,9 @@ https://192.168.1.6:8443
             }
 
             // 更新UI
-            const fileCount = Object.keys(fileSources).length;
-            resultStats.textContent = `${data.length} 个项目 (来自 ${fileCount} 个文件)`;
+            resultStats.textContent = `${data.length} 个项目`;
             downloadBtn.disabled = false;
             copyBtn.disabled = false;
-            clearResultBtn.disabled = false;
 
             // 更新结果信息
             resultInfo.innerHTML = `<i class="fas fa-check-circle"></i><span>${message}</span>`;
@@ -1457,21 +1062,12 @@ https://192.168.1.6:8443
             // 获取配置选项
             const connector = connectorSelect.value;
             const separator = separatorSelect.value === '\\n' ? '\n' : separatorSelect.value;
-            const batchOption = batchOptions.value;
-            const keepSourceInfo = batchOption === 'keep-source';
 
             // 生成结果文本
             let resultText = '';
 
             data.forEach(item => {
-                let line = `${item.ip}${connector}${item.port}`;
-                
-                // 如果保留来源信息，添加来源
-                if (keepSourceInfo && item.fileName) {
-                    line += ` [来自: ${item.fileName}]`;
-                }
-                
-                resultText += line + separator;
+                resultText += `${item.ip}${connector}${item.port}${separator}`;
             });
 
             // 移除最后一个分隔符
@@ -1488,23 +1084,17 @@ https://192.168.1.6:8443
         // 新增：显示CSV表格结果
         function displayCsvResult(data, message) {
             const columns = outputColumns.value.split(',');
-            const batchOption = batchOptions.value;
-            const keepSourceInfo = batchOption === 'keep-source' && currentMode === 'csv-extract';
-
-            // 如果有来源信息，添加到列
-            const displayColumns = keepSourceInfo ? [...columns, 'source'] : columns;
 
             // 生成CSV内容
-            let csvContent = displayColumns.join(',') + '\n';
+            let csvContent = columns.join(',') + '\n';
 
             data.forEach(item => {
-                const row = displayColumns.map(col => {
+                const row = columns.map(col => {
                     if (col === 'ip') return item.ip;
                     if (col === 'port') return item.port;
                     if (col === 'protocol') return item.protocol;
                     if (col === 'url') return item.url;
                     if (col === 'original') return `"${item.original}"`;
-                    if (col === 'source') return item.fileName || item.source || '';
                     return '';
                 });
                 csvContent += row.join(',') + '\n';
@@ -1515,14 +1105,13 @@ https://192.168.1.6:8443
 
             // 表头
             tableHtml += '<thead><tr>';
-            displayColumns.forEach(col => {
+            columns.forEach(col => {
                 let displayName = col;
                 if (col === 'ip') displayName = 'IP地址';
                 if (col === 'port') displayName = '端口';
                 if (col === 'protocol') displayName = '协议';
                 if (col === 'url') displayName = 'URL';
                 if (col === 'original') displayName = '原始输入';
-                if (col === 'source') displayName = '来源文件';
                 tableHtml += `<th>${displayName}</th>`;
             });
             tableHtml += '</tr></thead>';
@@ -1531,21 +1120,14 @@ https://192.168.1.6:8443
             tableHtml += '<tbody>';
             data.forEach(item => {
                 tableHtml += '<tr>';
-                displayColumns.forEach(col => {
+                columns.forEach(col => {
                     let value = '';
                     if (col === 'ip') value = item.ip;
                     if (col === 'port') value = item.port;
                     if (col === 'protocol') value = item.protocol;
                     if (col === 'url') value = item.url;
                     if (col === 'original') value = item.original;
-                    if (col === 'source') value = item.fileName || item.source || '';
-                    
-                    // 如果是来源列且当前模式是CSV提取，添加特殊样式
-                    if (col === 'source' && item.fileName) {
-                        tableHtml += `<td><span class="source-column">${value}</span></td>`;
-                    } else {
-                        tableHtml += `<td>${value}</td>`;
-                    }
+                    tableHtml += `<td>${value}</td>`;
                 });
                 tableHtml += '</tr>';
             });
@@ -1570,19 +1152,10 @@ https://192.168.1.6:8443
                 // 文本格式下载
                 const connector = connectorSelect.value;
                 const separator = separatorSelect.value === '\\n' ? '\n' : separatorSelect.value;
-                const batchOption = batchOptions.value;
-                const keepSourceInfo = batchOption === 'keep-source';
 
                 let text = '';
                 extractedData.forEach(item => {
-                    let line = `${item.ip}${connector}${item.port}`;
-                    
-                    // 如果保留来源信息，添加来源
-                    if (keepSourceInfo && item.fileName) {
-                        line += ` [来自: ${item.fileName}]`;
-                    }
-                    
-                    text += line + separator;
+                    text += `${item.ip}${connector}${item.port}${separator}`;
                 });
 
                 if (separator.length > 0) {
@@ -1590,7 +1163,7 @@ https://192.168.1.6:8443
                 }
 
                 content = text;
-                fileName = `批量提取结果_${getTimestamp()}.txt`;
+                fileName = `${currentFileName.replace('.csv', '') || '提取结果'}_${getTimestamp()}.txt`;
                 mimeType = 'text/plain;charset=utf-8';
             } else {
                 // CSV格式下载
@@ -1695,8 +1268,6 @@ https://192.168.1.6:8443
         }
 
         function cleanIP(ip) {
-            if (!ip) return '';
-            
             // 移除URL部分，只保留IP
             if (ip.includes('://')) {
                 ip = ip.split('://')[1];
@@ -1716,7 +1287,6 @@ https://192.168.1.6:8443
         }
 
         function cleanPort(port) {
-            if (!port) return '';
             // 移除非数字字符
             return port.replace(/\D/g, '');
         }
